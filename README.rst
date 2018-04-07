@@ -7,6 +7,7 @@ Features
 - Framework agnostic solution
 - Easy to write a new extension and use it later with your code
 - Base class for implementing AMQP workers
+- Register a new microservice in Open Matchmaking platform
 
 Installation
 ============
