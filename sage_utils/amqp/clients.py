@@ -8,7 +8,7 @@ class RpcAmqpClient(object):
     DEFAULT_PROPERTIES = {
         'content_type': CONTENT_TYPE,
         'delivery_mode': 2,
-        'correlation_id': 'test-event-name'
+        'correlation_id': 'event-name'
     }
 
     def __init__(self, app, routing_key, request_exchange='',
