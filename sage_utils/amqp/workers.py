@@ -2,7 +2,11 @@ from sage_utils.amqp.base import AmqpWorker
 from sage_utils.amqp.clients import RpcAmqpClient
 
 
-class MicroserviceRegisterWorker(AmqpWorker):
+class BaseRegisterWorker(AmqpWorker):
+    """
+    Base class for implementing worker which is registering a new
+    microservice in Open Matchmaking platform.
+    """
     REQUEST_QUEUE_NAME = "auth.microservices.register"
     REQUEST_EXCHANGE_NAME = "open-matchmaking.direct"
     RESPONSE_EXCHANGE_NAME = "open-matchmaking.responses.direct"
