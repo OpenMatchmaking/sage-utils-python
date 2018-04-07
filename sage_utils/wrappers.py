@@ -8,23 +8,28 @@ class Response(object):
     ERROR_FIELD_NAME = 'error'
     EVENT_FIELD_NAME = 'event-name'
 
-    def append_extra_fields(self, event_name, *args, **kwargs):
-        return {self.EVENT_FIELD_NAME: event_name}
+    def __init__(self, data=None, *args, **kwargs):
+        super(Response, self).__init__()
+        self.data = data
 
-    def from_error(self, error_type, message, event_name=None):
+    @classmethod
+    def from_error(cls, error_type, message, event_name=None):
         if isinstance(message, str) and not message.endswith('.'):
             message = message + '.'
 
         response = {
-            self.ERROR_FIELD_NAME: {
+            cls.ERROR_FIELD_NAME: {
                 "type": error_type,
                 "message": message
-            }
+            },
+            cls.EVENT_FIELD_NAME: event_name
         }
-        response.update(self.append_extra_fields(event_name))
-        return response
+        return cls(data=response)
 
-    def wrap_content(self, data, event_name=None):
-        response = {self.CONTENT_FIELD_NAME: data}
-        response.update(self.append_extra_fields(event_name))
-        return response
+    @classmethod
+    def with_content(cls, data, event_name=None):
+        response = {
+            cls.CONTENT_FIELD_NAME: data,
+            cls.EVENT_FIELD_NAME: event_name
+        }
+        return cls(data=response)
