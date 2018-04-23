@@ -30,7 +30,7 @@ class RpcAmqpClient(object):
     def response_queue_name(self):
         return self._response_queue_name
 
-    async def connect(self):
+    async def connect(self, consume_timeout=None):
         self.transport, self.protocol = await self.app.amqp.connect()
         self.channel = await self.protocol.channel()
 
@@ -53,18 +53,22 @@ class RpcAmqpClient(object):
                 prefetch_size=0,
                 connection_global=False
             )
-            await self.channel.basic_consume(
-                self.on_response,
-                queue_name=self._response_queue_name,
+            await asyncio.wait_for(
+                self.channel.basic_consume(
+                    self.on_response,
+                    queue_name=self._response_queue_name,
+                ),
+                timeout=consume_timeout,
+                loop=self.app.loop
             )
 
     async def on_response(self, _channel, body, _envelope, _properties):
         self._response = json.loads(body)
         self.waiter.set()
 
-    async def send(self, payload={}, properties={}, raw_data=False):
+    async def send(self, payload={}, properties={}, raw_data=False, consume_timeout=None):
         if not self.protocol:
-            await self.connect()
+            await self.connect(consume_timeout=consume_timeout)
 
         request_properties = deepcopy(self.DEFAULT_PROPERTIES)
         request_properties.update({'reply_to': self.response_queue_name})
