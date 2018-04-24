@@ -1,3 +1,4 @@
+import asyncio
 import os
 import json
 
@@ -14,15 +15,16 @@ class FakeConfig(object):
 
 class Application(object):
 
-    def __init__(self, config=None):
+    def __init__(self, config=None, loop=None):
         super(Application, self).__init__()
         self.config = config
+        self.loop = loop or asyncio.get_event_loop()
 
 
 class BaseWorker(AmqpWorker):
     QUEUE_NAME = 'process-request'
-    REQUEST_EXCHANGE_NAME = 'amqp.direct'
-    RESPONSE_EXCHANGE_NAME = 'amqp.direct'
+    REQUEST_EXCHANGE_NAME = 'amq.direct'
+    RESPONSE_EXCHANGE_NAME = 'amq.direct'
     CONTENT_TYPE = 'application/json'
 
     def generate_response(self, data):
@@ -67,10 +69,11 @@ class BaseWorker(AmqpWorker):
 
 class FakeRegisterMicroserviceWorker(BaseWorker):
     QUEUE_NAME = 'microservice.register'
+    ERROR_DESCRIPTION = "Name and version must be specified."
 
     def generate_response(self, raw_data):
         data = json.loads(raw_data.strip())
 
         if 'name' not in data.keys() and 'version' not in data.keys():
-            return Response.from_error(VALIDATION_ERROR, "Name and version must be specified.")
+            return Response.from_error(VALIDATION_ERROR, self.ERROR_DESCRIPTION)
         return Response.with_content("OK")
