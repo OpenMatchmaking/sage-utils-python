@@ -6,6 +6,7 @@ from sage_utils.extension import BaseExtension
 
 
 class AmqpExtension(BaseExtension):
+    extension_name = 'amqp'
     app_attribute = 'amqp'
     workers = []
     active_tasks = []
@@ -31,6 +32,7 @@ class AmqpExtension(BaseExtension):
     async def init(self, loop):
         if not hasattr(self.app, 'extensions'):
             setattr(self.app, 'extensions', {})
+        setattr(self.app, self.app_attribute, self)
         self.app.extensions[self.extension_name] = self
 
         for worker in self.workers:
