@@ -2,20 +2,16 @@ import pytest
 from sage_utils.extension import BaseExtension
 
 
-class FakeConfig(object):
+from tests.fixtures import Application, FakeConfig as BaseFakeConfig
+
+
+class FakeConfig(BaseFakeConfig):
     key = 'value'
 
 
 class CustomExtension(BaseExtension):
     extension_name = 'ext'
     app_attribute = 'ext'
-
-
-class Application(object):
-
-    def __init__(self, config=None):
-        super(Application, self).__init__()
-        self.config = config
 
 
 def test_constructor_with_init():
