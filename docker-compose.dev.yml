@@ -16,6 +16,10 @@ services:
       - APP_DEBUG=False
       - APP_SERVER=none
       - WAIT_FOR_RABBITMQ=30
+      - AMQP_USERNAME=user
+      - AMQP_PASSWORD=password
+      - AMQP_HOST=rabbitmq
+      - AMQP_VIRTUAL_HOST=/
     volumes:
       - ./:/app/
     depends_on:
@@ -30,8 +34,8 @@ services:
       - 5672:5672
       - 15672:15672
     environment:
-      - RABBITMQ_USERNAME=guest
-      - RABBITMQ_PASSWORD=guest
-      - RABBITMQ_VHOST=vhost
+      - RABBITMQ_USERNAME=user
+      - RABBITMQ_PASSWORD=password
+      - RABBITMQ_VHOST=/
     networks:
       - app-tier
