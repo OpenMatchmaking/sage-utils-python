@@ -59,11 +59,11 @@ async def test_rpc_amqp_client_returns_an_error(event_loop):
     response = await client.send(payload={})
 
     assert Response.ERROR_FIELD_NAME in response.keys()
-    assert 'message' in response[Response.ERROR_FIELD_NAME].keys()
-    assert response[Response.ERROR_FIELD_NAME]['message'] == VALIDATION_ERROR_DECR
+    assert Response.ERROR_TYPE_FIELD_NAME in response[Response.ERROR_FIELD_NAME].keys()
+    assert response[Response.ERROR_FIELD_NAME][Response.ERROR_TYPE_FIELD_NAME] == VALIDATION_ERROR  # NOQA
 
-    assert 'type' in response[Response.ERROR_FIELD_NAME].keys()
-    assert response[Response.ERROR_FIELD_NAME]['type'] == VALIDATION_ERROR
+    assert Response.ERROR_DETAILS_FIELD_NAME in response[Response.ERROR_FIELD_NAME].keys()
+    assert response[Response.ERROR_FIELD_NAME][Response.ERROR_DETAILS_FIELD_NAME] == VALIDATION_ERROR_DECR  # NOQA
 
     assert Response.EVENT_FIELD_NAME in response.keys()
     assert response[Response.EVENT_FIELD_NAME] is None
