@@ -20,11 +20,11 @@ def test_from_error_class_method(error_type, message, event_name):
     assert response.data[Response.EVENT_FIELD_NAME] == event_name
 
     assert Response.ERROR_FIELD_NAME in response.data.keys()
-    assert 'type' in response.data[Response.ERROR_FIELD_NAME].keys()
-    assert response.data[Response.ERROR_FIELD_NAME]['type'] == error_type
+    assert Response.ERROR_TYPE_FIELD_NAME in response.data[Response.ERROR_FIELD_NAME].keys()
+    assert response.data[Response.ERROR_FIELD_NAME][Response.ERROR_TYPE_FIELD_NAME] == error_type
 
-    assert 'message' in response.data[Response.ERROR_FIELD_NAME].keys()
-    assert response.data[Response.ERROR_FIELD_NAME]['message'] == message
+    assert Response.ERROR_DETAILS_FIELD_NAME in response.data[Response.ERROR_FIELD_NAME].keys()
+    assert response.data[Response.ERROR_FIELD_NAME][Response.ERROR_DETAILS_FIELD_NAME] == message
 
 
 @pytest.mark.parametrize("error_type, message, event_name", [
@@ -40,12 +40,12 @@ def test_from_error_with_a_message_without_the_period_in_the_end(error_type, mes
     assert response.data[Response.EVENT_FIELD_NAME] == event_name
 
     assert Response.ERROR_FIELD_NAME in response.data.keys()
-    assert 'type' in response.data[Response.ERROR_FIELD_NAME].keys()
-    assert response.data[Response.ERROR_FIELD_NAME]['type'] == error_type
+    assert Response.ERROR_TYPE_FIELD_NAME in response.data[Response.ERROR_FIELD_NAME].keys()
+    assert response.data[Response.ERROR_FIELD_NAME][Response.ERROR_TYPE_FIELD_NAME] == error_type
 
-    assert 'message' in response.data[Response.ERROR_FIELD_NAME].keys()
-    assert response.data[Response.ERROR_FIELD_NAME]['message'].endswith('.')
-    assert response.data[Response.ERROR_FIELD_NAME]['message'] == "{}.".format(message)
+    assert Response.ERROR_DETAILS_FIELD_NAME in response.data[Response.ERROR_FIELD_NAME].keys()
+    assert response.data[Response.ERROR_FIELD_NAME][Response.ERROR_DETAILS_FIELD_NAME].endswith('.')  # NOQA
+    assert response.data[Response.ERROR_FIELD_NAME][Response.ERROR_DETAILS_FIELD_NAME] == "{}.".format(message)  # NOQA
 
 
 @pytest.mark.parametrize("data, event_name", [
