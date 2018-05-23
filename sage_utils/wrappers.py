@@ -8,6 +8,9 @@ class Response(object):
     ERROR_FIELD_NAME = 'error'
     EVENT_FIELD_NAME = 'event-name'
 
+    ERROR_TYPE_FIELD_NAME = 'type'
+    ERROR_DETAILS_FIELD_NAME = 'details'
+
     def __init__(self, data=None, *args, **kwargs):
         super(Response, self).__init__()
         self.data = data
@@ -19,8 +22,8 @@ class Response(object):
 
         response = {
             cls.ERROR_FIELD_NAME: {
-                "type": error_type,
-                "message": message
+                cls.ERROR_TYPE_FIELD_NAME: error_type,
+                cls.ERROR_DETAILS_FIELD_NAME: message
             },
             cls.EVENT_FIELD_NAME: event_name
         }
