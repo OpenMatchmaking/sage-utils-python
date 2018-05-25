@@ -52,6 +52,30 @@ async def test_microservice_has_been_registered_successfully(event_loop):
 
 
 @pytest.mark.asyncio
+async def test_microservice_has_been_registered_successfully_with_custom_event_loop(event_loop):
+    app = Application(config=FakeConfig(), loop=event_loop)
+    register_worker = FakeRegisterMicroserviceWorker(app)
+    extension = AmqpExtension(app)
+    extension.register_worker(register_worker)
+
+    await extension.init(event_loop)
+
+    instance = BaseRegisterWorker(app)
+    instance.REQUEST_QUEUE_NAME = REQUEST_QUEUE
+    instance.REQUEST_EXCHANGE_NAME = REQUEST_EXCHANGE
+    instance.RESPONSE_EXCHANGE_NAME = RESPONSE_EXCHANGE_NAME
+
+    with mock.patch(
+        target='sage_utils.amqp.workers.BaseRegisterWorker.get_microservice_data',
+        side_effect=valid_microservice_data
+    ):
+        result = await instance.run(loop=event_loop)
+        assert result is None
+
+    await extension.deinit(event_loop)
+
+
+@pytest.mark.asyncio
 async def test_register_worker_raises_an_error_with_invalid_response(event_loop):
     app = Application(config=FakeConfig(), loop=event_loop)
     register_worker = FakeRegisterMicroserviceWorker(app)
