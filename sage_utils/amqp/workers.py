@@ -26,7 +26,8 @@ class BaseRegisterWorker(AmqpWorker):
         raise NotImplementedError("The `get_microservice_data(data)` method "
                                   "must be implemented.")
 
-    async def run(self, *args, **kwargs):
+    async def run(self, *args, loop=None, **kwargs):
+        loop = loop or getattr(self.app, 'loop', None) or asyncio.get_event_loop()
         client = RpcAmqpClient(
             self.app,
             routing_key=self.REQUEST_QUEUE_NAME,
@@ -58,7 +59,9 @@ class BaseRegisterWorker(AmqpWorker):
                     "responding or the required queues and the exchanges aren't created. "
                     "Retry after {} second(s).".format(self.RETRY_TIMEOUT)
                 )
-                await asyncio.sleep(self.RETRY_TIMEOUT, loop=self.app.loop)
+                await asyncio.sleep(self.RETRY_TIMEOUT, loop=loop)
+
+        await self.free_resources()
 
         if not is_registered:
             raise ConnectionError('Occurred an error during registering microservice.')
