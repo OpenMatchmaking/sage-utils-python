@@ -12,8 +12,9 @@ class RpcAmqpClient(object):
     }
 
     def __init__(self, app, routing_key, request_exchange='',
-                 response_queue=None, response_exchange=''):
+                 response_queue=None, response_exchange='', loop=None):
         self.app = app
+        self.loop = loop or getattr(self.app, 'loop', None) or asyncio.get_event_loop()
         self.routing_key = routing_key
         self.request_exchange = request_exchange
         self.response_queue = response_queue
@@ -59,7 +60,7 @@ class RpcAmqpClient(object):
                     queue_name=self._response_queue_name,
                 ),
                 timeout=consume_timeout,
-                loop=self.app.loop
+                loop=self.loop
             )
 
     async def on_response(self, _channel, body, _envelope, _properties):
