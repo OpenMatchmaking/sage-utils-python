@@ -33,7 +33,8 @@ class BaseRegisterWorker(AmqpWorker):
             routing_key=self.REQUEST_QUEUE_NAME,
             request_exchange=self.REQUEST_EXCHANGE_NAME,
             response_queue='',
-            response_exchange=self.RESPONSE_EXCHANGE_NAME
+            response_exchange=self.RESPONSE_EXCHANGE_NAME,
+            loop=loop
         )
 
         is_registered = False
