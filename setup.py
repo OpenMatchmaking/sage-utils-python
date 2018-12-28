@@ -14,7 +14,7 @@ with open('sage_utils/__init__.py', 'rb') as f:
 
 
 requirements = [
-    'aioamqp==0.11.0',
+    'aioamqp==0.12.0',
 ]
 
 
